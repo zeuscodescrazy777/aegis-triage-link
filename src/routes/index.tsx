@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Navbar } from "@/components/aegis/Navbar";
 import { TriageFeed } from "@/components/aegis/TriageFeed";
 import { IncidentDetails } from "@/components/aegis/IncidentDetails";
-import { LiveMap } from "@/components/aegis/LiveMap";
 import type { Incident } from "@/components/aegis/types";
+
+const LiveMap = lazy(() =>
+  import("@/components/aegis/LiveMap").then((m) => ({ default: m.LiveMap })),
+);
 
 export const Route = createFileRoute("/")({
   component: Dashboard,
@@ -55,7 +58,15 @@ function Dashboard() {
         {/* Right: details + map stacked */}
         <div className="grid min-h-0 grid-rows-[minmax(0,1fr)_minmax(0,1fr)] gap-2">
           <IncidentDetails incident={selected} />
-          <LiveMap incident={selected} />
+          <Suspense
+            fallback={
+              <div className="flex items-center justify-center border-2 border-foreground bg-card font-mono-data text-xs uppercase text-muted-foreground">
+                LOADING MAP…
+              </div>
+            }
+          >
+            <LiveMap incident={selected} />
+          </Suspense>
         </div>
       </main>
 
