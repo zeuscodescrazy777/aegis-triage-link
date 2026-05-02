@@ -8,7 +8,8 @@ interface Props {
   onSelect: (incident: Incident) => void;
 }
 
-function formatRelative(iso: string, now: number) {
+function formatRelative(iso: string, now: number | null) {
+  if (now === null) return "—";
   const diff = Math.max(0, Math.floor((now - new Date(iso).getTime()) / 1000));
   if (diff < 60) return `${diff}s`;
   if (diff < 3600) return `${Math.floor(diff / 60)}m ${diff % 60}s`;
@@ -20,7 +21,7 @@ function formatRelative(iso: string, now: number) {
 export function TriageFeed({ selectedId, onSelect }: Props) {
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [loading, setLoading] = useState(true);
-  const [tick, setTick] = useState(Date.now());
+  const [tick, setTick] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
