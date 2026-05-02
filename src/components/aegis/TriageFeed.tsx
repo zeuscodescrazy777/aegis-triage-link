@@ -67,6 +67,7 @@ export function TriageFeed({ selectedId, onSelect }: Props) {
       )
       .subscribe();
 
+    setTick(Date.now());
     const clockId = setInterval(() => setTick(Date.now()), 1000);
 
     return () => {
