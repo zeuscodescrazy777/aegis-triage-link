@@ -69,8 +69,6 @@ export function LiveMap({ incident }: Props) {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> · <a href="https://carto.com/">CARTO</a>'
             url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
           />
-          <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-border/40" />
-          {/* tile layer above already rendered */}
           {incident && (
             <>
               <Recenter lat={incident.lat} lon={incident.lon} />
