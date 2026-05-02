@@ -21,9 +21,9 @@ function makeIcon(severity: Incident["severity"]) {
   const color = SEV_COLORS[severity];
   return L.divIcon({
     className: "",
-    html: `<div style="width:22px;height:22px;background:${color};border:3px solid #1A1A1A;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:11px;font-family:ui-monospace,monospace;">${severity[0]}</div>`,
-    iconSize: [22, 22],
-    iconAnchor: [11, 11],
+    html: `<div style="width:24px;height:24px;border-radius:9999px;background:${color};border:2px solid #ffffff;box-shadow:0 0 0 3px ${color}55, 0 4px 12px rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:11px;font-family:'JetBrains Mono',ui-monospace,monospace;">${severity[0]}</div>`,
+    iconSize: [24, 24],
+    iconAnchor: [12, 12],
   });
 }
 
@@ -43,14 +43,17 @@ export function LiveMap({ incident }: Props) {
   const initialRef = useRef<[number, number]>([40.7589, -73.9851]);
 
   return (
-    <section className="flex h-full flex-col border-2 border-foreground bg-card">
-      <div className="border-b-2 border-foreground bg-gov-navy px-3 py-2 text-gov-navy-foreground">
+    <section
+      className="flex h-full flex-col overflow-hidden rounded-xl border border-border/60 bg-card/70 backdrop-blur-md"
+      style={{ boxShadow: "var(--shadow-elevate)" }}
+    >
+      <div className="border-b border-border/60 px-4 py-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-xs font-extrabold uppercase tracking-widest">Geo Position</h2>
-          <span className="font-mono-data text-[11px] font-bold">
+          <h2 className="text-sm font-semibold tracking-tight text-foreground">Geo Position</h2>
+          <span className="font-mono-data text-[11px] font-semibold text-muted-foreground">
             {incident
-              ? `LAT ${incident.lat.toFixed(4)} / LON ${incident.lon.toFixed(4)}`
-              : "AWAITING SELECTION"}
+              ? `LAT ${incident.lat.toFixed(4)} · LON ${incident.lon.toFixed(4)}`
+              : "Awaiting selection"}
           </span>
         </div>
       </div>
@@ -63,8 +66,8 @@ export function LiveMap({ incident }: Props) {
           zoomControl={false}
         >
           <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> · <a href="https://carto.com/">CARTO</a>'
+            url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
           />
           {incident && (
             <>

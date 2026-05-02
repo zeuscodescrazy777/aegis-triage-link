@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { sortIncidents, type Incident } from "./types";
 import { SeverityTag } from "./SeverityTag";
+import { Activity } from "lucide-react";
 
 interface Props {
   selectedId: string | null;
@@ -85,36 +86,42 @@ export function TriageFeed({ selectedId, onSelect }: Props) {
   };
 
   return (
-    <section className="flex h-full flex-col border-2 border-foreground bg-card">
-      <div className="border-b-2 border-foreground bg-gov-navy px-3 py-2 text-gov-navy-foreground">
+    <section
+      className="flex h-full flex-col overflow-hidden rounded-xl border border-border/60 bg-card/70 backdrop-blur-md"
+      style={{ boxShadow: "var(--shadow-elevate)" }}
+    >
+      <div className="border-b border-border/60 px-4 py-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-xs font-extrabold uppercase tracking-widest">
-            Live Triage Feed
-          </h2>
-          <div className="flex items-center gap-1.5 font-mono-data text-[11px] font-bold">
-            <span className="border-2 border-foreground bg-sev-red px-1.5 py-0.5 text-sev-foreground">
+          <div className="flex items-center gap-2">
+            <Activity className="h-4 w-4 text-primary" />
+            <h2 className="text-sm font-semibold tracking-tight text-foreground">
+              Live Triage Feed
+            </h2>
+          </div>
+          <div className="flex items-center gap-1.5 font-mono-data text-[11px] font-semibold">
+            <span className="rounded-full bg-sev-red/15 px-2 py-0.5 text-sev-red ring-1 ring-sev-red/40">
               R {counts.RED}
             </span>
-            <span className="border-2 border-foreground bg-sev-amber px-1.5 py-0.5 text-foreground">
+            <span className="rounded-full bg-sev-amber/15 px-2 py-0.5 text-sev-amber ring-1 ring-sev-amber/40">
               A {counts.AMBER}
             </span>
-            <span className="border-2 border-foreground bg-sev-green px-1.5 py-0.5 text-sev-foreground">
+            <span className="rounded-full bg-sev-green/15 px-2 py-0.5 text-sev-green ring-1 ring-sev-green/40">
               G {counts.GREEN}
             </span>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-[60px_1fr_70px] gap-2 border-b-2 border-foreground bg-muted px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground">
-        <span>SEV</span>
+      <div className="grid grid-cols-[80px_1fr_70px] gap-2 border-b border-border/60 bg-surface-1/40 px-4 py-2 text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+        <span>Severity</span>
         <span>Summary / Location</span>
         <span className="text-right">Age</span>
       </div>
 
       <div className="flex-1 overflow-y-auto">
-        {loading && <div className="p-4 font-mono-data text-xs">LOADING FEED…</div>}
+        {loading && <div className="p-4 font-mono-data text-xs text-muted-foreground">Loading feed…</div>}
         {error && (
-          <div className="m-2 border-2 border-foreground bg-sev-red p-2 text-xs font-bold text-sev-foreground">
+          <div className="m-3 rounded-lg border border-sev-red/40 bg-sev-red/10 p-3 text-xs font-medium text-sev-red">
             ERR: {error}
           </div>
         )}
@@ -130,30 +137,33 @@ export function TriageFeed({ selectedId, onSelect }: Props) {
               <li
                 key={inc.id}
                 onClick={() => onSelect(inc)}
-                className={`grid cursor-pointer grid-cols-[60px_1fr_70px] gap-2 border-b-2 border-foreground px-3 py-2 ${
-                  active ? "bg-gov-navy text-gov-navy-foreground" : "bg-card hover:bg-accent"
+                className={`relative grid cursor-pointer grid-cols-[80px_1fr_70px] gap-2 border-b border-border/40 px-4 py-3 transition-colors ${
+                  active
+                    ? "bg-primary/10"
+                    : "hover:bg-surface-1/60"
                 }`}
               >
-                <div>
+                {active && (
+                  <span className="absolute inset-y-2 left-0 w-0.5 rounded-full bg-primary" />
+                )}
+                <div className="flex items-center">
                   <SeverityTag severity={inc.severity} size="sm" />
                 </div>
                 <div className="min-w-0">
-                  <div className="truncate text-xs font-bold uppercase">{inc.summary}</div>
-                  <div className={`truncate text-[11px] ${active ? "opacity-80" : "text-muted-foreground"}`}>
+                  <div className="truncate text-sm font-semibold text-foreground">
+                    {inc.summary}
+                  </div>
+                  <div className="truncate text-[11px] text-muted-foreground">
                     {inc.location_text}
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="font-mono-data text-xs font-bold">{formatRelative(inc.created_at, tick)}</div>
+                  <div className="font-mono-data text-xs font-semibold text-foreground">
+                    {formatRelative(inc.created_at, tick)}
+                  </div>
                   <div
-                    className={`mt-0.5 font-mono-data text-[10px] font-bold uppercase ${
-                      inc.status === "DISPATCHED"
-                        ? active
-                          ? "text-sev-green"
-                          : "text-sev-green"
-                        : active
-                          ? "opacity-80"
-                          : "text-muted-foreground"
+                    className={`mt-0.5 font-mono-data text-[10px] font-semibold uppercase tracking-wider ${
+                      inc.status === "DISPATCHED" ? "text-sev-green" : "text-sev-amber"
                     }`}
                   >
                     {inc.status}
